@@ -70,11 +70,53 @@ determine_mbti(EI_Score, SN_Score, TF_Score, JP_Score, Personality) :-
     atom_concat(EST, J, Personality).
 
 % Afinidades y conflictos
-high_affinity('ENFP', ['INFJ', 'INTJ']).
-low_affinity('ENFP', ['ISTJ', 'ESTJ']).
+high_affinity('ISTJ', ['ENFP', 'ESTJ']).
+low_affinity('ISTJ', ['ENTP']).
 
-high_affinity('INTP', ['ENTP', 'ENTJ']).
-low_affinity('INTP', ['ESFP', 'ESTJ']).
+high_affinity('ISFJ', ['ESFP', 'ESTP']).
+low_affinity('ISFJ', ['ENTP']).
+
+high_affinity('INFJ', ['ENFP', 'INFP']).
+low_affinity('INFJ', ['ESTJ', 'ESTP']).
+
+high_affinity('INTJ', ['ENTP', 'INFJ']).
+low_affinity('INTJ', ['ESFP', 'ESTP']).
+
+high_affinity('ISTP', ['ESTJ', 'ISTJ']).
+low_affinity('ISTP', ['ENFJ', 'ESFJ']).
+
+high_affinity('ISFP', ['ESFJ', 'ENFP']).
+low_affinity('ISFP', ['ENTJ', 'INTJ']).
+
+high_affinity('INFP', ['ENFJ', 'INFJ']).
+low_affinity('INFP', ['ESTJ', 'ESTP']).
+
+high_affinity('INTP', ['ENTJ', 'INFP']).
+low_affinity('INTP', ['ESFJ', 'ENFJ']).
+
+high_affinity('ESTP', ['ISFJ', 'ESFP']).
+low_affinity('ESTP', ['INFJ', 'INTJ']).
+
+high_affinity('ESFP', ['ISFJ', 'ESFJ']).
+low_affinity('ESFP', ['INTJ', 'INTP']).
+
+high_affinity('ENFP', ['INFJ', 'INFP']).
+low_affinity('ENFP', ['ISTJ', 'INTJ']).
+
+high_affinity('ENTP', ['INTJ', 'ENFP']).
+low_affinity('ENTP', ['ISFJ', 'ISTJ']).
+
+high_affinity('ESTJ', ['ISTP', 'ISTJ']).
+low_affinity('ESTJ', ['INFP', 'INTP']).
+
+high_affinity('ESFJ', ['ISFP', 'ENFJ']).
+low_affinity('ESFJ', ['INTP', 'ISTP']).
+
+high_affinity('ENFJ', ['INFP', 'ESFJ']).
+low_affinity('ENFJ', ['ISTP', 'ISTJ']).
+
+high_affinity('ENTJ', ['INTP', 'INTJ']).
+low_affinity('ENTJ', ['ISFP', 'ISFJ']).
 
 % Consultar personalidades compatibles
 compatible(Personality, CompatibleList) :- high_affinity(Personality, CompatibleList).
