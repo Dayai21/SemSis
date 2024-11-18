@@ -8,54 +8,58 @@ prolog.consult("personalities.pl")
 root = tk.Tk()
 root.title("Test de personalidad compatible")
 
-# Aqui agreguen sus preguntas por favor 
-questions = [
-    "Haces nuevos amigos con frecuencia"
-]
+def ask_questions():
+    scores = {'EI': 0, 'SN': 0, 'TF': 0, 'JP': 0}
 
-answers = [
-    "De acuerdo", 
-    "Un poco de acuerdo", 
-    "Ni de acuerdo ni desacuerdo", 
-    "Un poco en desacuerdo", 
-    "desacuerdo"
-]
+    for result in prolog.query("question(ID, Text, Axis, Opt1, Opt2)."):
+        print(f"Pregunta {result['ID']}: {result['Text']}")
+        print("1. Primera opción")
+        print("2. Segunda opción")
+        answer = int(input("Selecciona 1 o 2: "))
 
-i = 0
-puntaje = {
-    "introvertido": 0, 
-    "extrovertido": 0, 
-    "sensacion": 0, 
-    "intuicion": 0, 
-    "pensamiento": 0, 
-    "sentimiento": 0, 
-    "juicio": 0, 
-    "percepcion": 0
-}
+        if answer == 1:
+            scores[result['Axis']] += result['Opt1']
+        elif answer == 2:
+            scores[result['Axis']] += result['Opt2']
+        else:
+            print("Opción inválida, se tomará como 1.")
+            scores[result['Axis']] += result['Opt1']
 
-def next_question(option):
-    global i 
-    
-    answer = answers[option]
-    prolog_query = f"score('{answer.lower()}', P), update_feature(P, '{answers[i].lower()}', score)."
-    list(prolog.query(prolog_query))
-    
-    i += 1 
-    
-    if i < len(answers):
-        print("Siguiente pregunta...")
-        question_label.config(text=questions[i])
-    else:
-        evaluate()
-    
-def evaluate():
-    print(list(prolog.query("compatible_personalidad(Persona, Compatible).")))
-    
-question_label = tk.Label(root, text=questions[i], wraplength=400)
-question_label.pack(pady=20)
+    return scores
 
-for i, ans in enumerate(answers):
-    btn = tk.Button(root, text=ans, command=lambda i=i: next_question(i))
-    btn.pack(fill="x")
-    
-root.mainloop()
+def determine_personality(scores):
+    """
+    Determina la personalidad en base a los puntajes.
+    """
+    query = (
+        f"determine_mbti({scores['EI']}, {scores['SN']}, {scores['TF']}, {scores['JP']}, Personality)."
+    )
+    for result in prolog.query(query):
+        return result['Personality']
+
+def get_affinities(personality):
+    """
+    Obtiene afinidades e incompatibilidades según la personalidad.
+    """
+    compatible_query = f"compatible('{personality}', CompatibleList)."
+    incompatible_query = f"incompatible('{personality}', IncompatibleList)."
+
+    compatible = []
+    incompatible = []
+
+    for result in prolog.query(compatible_query):
+        compatible = result['CompatibleList']
+
+    for result in prolog.query(incompatible_query):
+        incompatible = result['IncompatibleList']
+
+    return compatible, incompatible
+
+# Flujo principal
+scores = ask_questions()
+personality = determine_personality(scores)
+print(f"Tu tipo de personalidad es: {personality}")
+
+compatible, incompatible = get_affinities(personality)
+print(f"Personalidades compatibles: {compatible}")
+print(f"Personalidades incompatibles: {incompatible}")

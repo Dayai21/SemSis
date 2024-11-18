@@ -1,24 +1,28 @@
-feature(introvertido).
-feature(extrovertido).
-feature(sensacion).
-feature(intuicion).
-feature(pensamiento).
-feature(sentimiento).
-feature(juicio).
-feature(percepcion).
+% Preguntas con sus ejes y opciones
+question(1, "Prefieres trabajar solo o en equipo?", 'EI', 1, -1).
+question(2, "Tomas decisiones basadas en lógica o emociones?", 'TF', 1, -1).
+question(3, "Te enfocas en los detalles o en el panorama general?", 'SN', 1, -1).
+question(4, "Prefieres planificar todo o ser espontáneo?", 'JP', 1, -1).
 
+% Determinar personalidad basado en puntajes
+determine_mbti(EI_Score, SN_Score, TF_Score, JP_Score, Personality) :-
+    (EI_Score > 0 -> E = 'E'; E = 'I'),
+    (SN_Score > 0 -> S = 'S'; S = 'N'),
+    (TF_Score > 0 -> T = 'T'; T = 'F'),
+    (JP_Score > 0 -> J = 'J'; J = 'P'),
+    atom_concat(E, S, ES),
+    atom_concat(ES, T, EST),
+    atom_concat(EST, J, Personality).
 
-% Aqui ponen todas las personalidades con sus rasgos
-personality('ISTJ', introvertido, sensacion, pensamiento, juicio).
-personality('ENFP', extrovertido, intuicion, sentimiento, percepcion).
+% Afinidades y conflictos
+high_affinity('ENFP', ['INFJ', 'INTJ']).
+low_affinity('ENFP', ['ISTJ', 'ESTJ']).
 
-% la compatibilidad entre los rasgos
-compatible('ISTJ', 'ENFP').
+high_affinity('INTP', ['ENTP', 'ENTJ']).
+low_affinity('INTP', ['ESFP', 'ESTJ']).
 
-score('deacuerdo', 2).
-score('un poco de acuerdo', 2).
-score('ni en acuerdo ni desacuerdo', 2).
-score('un poco en desacuerdo', 2).
-score('desacuerdo', 2).
+% Consultar personalidades compatibles
+compatible(Personality, CompatibleList) :- high_affinity(Personality, CompatibleList).
 
-update_feature(Answer, Feature, CurrentScore)
+% Consultar personalidades incompatibles
+incompatible(Personality, IncompatibleList) :- low_affinity(Personality, IncompatibleList).
